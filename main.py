@@ -6,83 +6,86 @@
 #  Copyright © 2020 IA Society. All rights reserved.
 #
 
-import random
-import numpy
-import matplotlib.pyplot as plt
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
-
-# Número de Reinas
-NB_QUEENS = 5
-
-# Algotimo Fitness
-def evalNQueens(individual):
-    size = len(individual)
-
-    diagonal_izquierda_derecha = [0] * (2*size-1)
-    diagonal_derecha_izquierda = [0] * (2*size-1)
+import sys, copy, pprint
 
 
-    for i in range(size):
-        diagonal_izquierda_derecha[i+individual[i]] += 1
-        diagonal_derecha_izquierda[size-1-i+individual[i]] += 1
+def is_solution(coordinates, dimensions):
+    # check if multiple queens on same row
+    for x in range(dimensions):
+        pos = coordinates[x]
+        for next_col in range(x + 1, dimensions):
+            next_pos = coordinates[next_col]
+            # check if multiple queens on same row
+            if pos == next_pos:
+                return None
+            # check if multiple queens on same diagonal
+            if (pos + next_col - x) == next_pos:
+                return None
+            if (pos - next_col + x) == next_pos:
+                return None
+    return coordinates
 
-    suma = 0
-    for i in range(2*size-1):
-        if diagonal_izquierda_derecha[i] > 1:
-            suma += diagonal_izquierda_derecha[i] - 1
-        if diagonal_derecha_izquierda[i] > 1:
-            suma += diagonal_derecha_izquierda[i] - 1
-    return suma,
 
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMin)
+def print_solution(dim, sol):
+    for val in range(dim - 1, -1, -1):
+        for y in sol:
+            if y == val:
+                print(' Q  ', end='')
+            else:
+                print(' 0  ', end='')
+        print()
+    print()
 
-toolbox = base.Toolbox()
-toolbox.register("permutation", random.sample, range(NB_QUEENS), NB_QUEENS)
-toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.permutation)
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-toolbox.register("evaluate", evalNQueens)
-toolbox.register("mate", tools.cxPartialyMatched)
-toolbox.register("mutate", tools.mutShuffleIndexes, indpb=2.0/NB_QUEENS)
-toolbox.register("select", tools.selTournament, tournsize=3)
 
 def main():
-    seed = 0
-    random.seed(seed)
-    pop = toolbox.population(n=300)
-    hof = tools.HallOfFame(1)
-    stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("Avg", numpy.mean)
-    stats.register("Std", numpy.std)
-    stats.register("Min", numpy.min)
-    stats.register("Max", numpy.max)
+    solutions = []
+    dim = 5
+    # populate this_permutation
+    this_permutation = []
+    for n in range(dim):
+        this_permutation.append(0)
 
-    algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=100, stats=stats,
-                        halloffame=hof, verbose=True)
+    # calculate the number of permutations
+    possible_permutations = dim
+    for n in range(dim):
+        possible_permutations *= dim
 
-    return pop, stats, hof
+    # initialize the counter
+    #placement_cnt = 0
 
-if __name__ == "__main__":
-    pop, stats, best = main()
-    print(best)
-    print(best[0].fitness.values)
-    y = best[0]
-    x = range(NB_QUEENS)
-    x = numpy.array(x)
-    print(x)
-    y = numpy.array(y)
-    print(y)
-    x = x + 0.5
-    y = y + 0.5
-    plt.figure()
-    plt.scatter(x,y)
-    plt.xlim(0,NB_QUEENS)
-    plt.ylim(0,NB_QUEENS)
-    plt.xticks(x-0.5)
-    plt.yticks(x-0.5)
-    plt.grid(True)
-    plt.title(u"Mejor Posición")
-    plt.show()
+    # go through the permutations searching for all possible solutions
+    for n in range(possible_permutations):
+        rem = n
+        for m in range(dim):
+            this_permutation[m] = rem % dim
+            rem //= dim
+        # is this_permutation a solution?
+        result = is_solution(copy.copy(this_permutation), dim)
+        if result:
+            # was this solution encountered previously?
+            if result not in solutions:
+                print_solution(dim, this_permutation)
+                print("es solución!")
+                input("presiona enter para continuar")
+                solutions.append(result)
+        else:
+            print_solution(dim, this_permutation)
+
+
+    print('\nInvestigadas', possible_permutations, 'Posibilidades')
+    sol_cnt = len(solutions)
+    print(sol_cnt, 'Soluciones encontradas')
+"""
+    print('\n==========\nSolutions:\n==========')
+    print('\n("x" position is position of value in array.\n"y" position is value in array)\n')
+    cnt = 0
+    for solution in solutions:
+        cnt += 1
+        print()
+        print('Solution', cnt, ':')
+        pprint.pprint(solution)
+        print_solution(dim, solution)"""
+
+
+if __name__ == '__main__':
+    main()

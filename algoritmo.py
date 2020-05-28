@@ -62,19 +62,11 @@ def main():
         else:
             print("no es solucion\n")
 
-    print('\nInvestigated', possible_permutations, 'possibilities.')
+    print('\nInvestigadas', possible_permutations, 'posibilidades')
     sol_cnt = len(solutions)
-    print(sol_cnt, 'solutions found.')
+    print(sol_cnt, 'soluciones encontradas')
 
-    print('\n==========\nSolutions:\n==========')
-    print('\n("x" position is position of value in array.\n"y" position is value in array)\n')
-    cnt = 0
-    for solution in solutions:
-        cnt += 1
-        print()
-        print('Solution', cnt, ':')
-        pprint.pprint(solution)
-        print_solution(dim, solution)
+
 
 
 if __name__ == '__main__':
