@@ -8,15 +8,12 @@ Código: 211172172
 import sys, copy, pprint
 
 def is_solution(coordinates, dimensions):
-    # check if multiple queens on same row
     for x in range(dimensions):
         pos = coordinates[x]
         for next_col in range(x + 1, dimensions):
             next_pos = coordinates[next_col]
-            # check if multiple queens on same row
             if pos == next_pos:
                 return None
-            # check if multiple queens on same diagonal
             if (pos + next_col - x) == next_pos:
                 return None
             if (pos - next_col + x) == next_pos:
@@ -36,36 +33,31 @@ def print_solution(dim, sol):
 def main():
     solutions = []
     dim = 5
-    # populate this_permutation
     this_permutation = []
     for n in range(dim):
         this_permutation.append(0)
-    # calculate the number of permutations
     possible_permutations = dim
     for n in range(dim):
         possible_permutations *= dim
 
-    # go through the permutations searching for all possible solutions
     for n in range(possible_permutations):
         rem = n
         for m in range(dim):
             this_permutation[m] = rem % dim
             rem //= dim
-        # is this_permutation a solution?
         print_solution(dim, this_permutation)
         result = is_solution(copy.copy(this_permutation), dim)
         if result:
-            # was this solution encountered previously?
             if result not in solutions:
                 print("¡Es solucion!")
-                input("Oprima Enter para continuar\n")
+                input("Oprima Enter para continuar.\n")
                 solutions.append(result)
         else:
-            print("no es solucion\n")
+            print("No es solucion.\n")
 
-    print('\nInvestigadas', possible_permutations, 'posibilidades')
+    print('\nInvestigadas', possible_permutations, 'posibilidades.')
     sol_cnt = len(solutions)
-    print(sol_cnt, 'Soluciones encontradas')
+    print(sol_cnt, ' soluciones encontradas.')
 
 if __name__ == '__main__':
     main()
