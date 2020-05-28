@@ -1,6 +1,5 @@
 import sys, copy, pprint
 
-
 def is_solution(coordinates, dimensions):
     # check if multiple queens on same row
     for x in range(dimensions):
@@ -17,7 +16,6 @@ def is_solution(coordinates, dimensions):
                 return None
     return coordinates
 
-
 def print_solution(dim, sol):
     for val in range(dim - 1, -1, -1):
         for y in sol:
@@ -27,7 +25,6 @@ def print_solution(dim, sol):
                 print('. ', end='')
         print()
     print()
-
 
 def main():
     solutions = []
@@ -41,9 +38,6 @@ def main():
     for n in range(dim):
         possible_permutations *= dim
 
-    # initialize the counter
-    #placement_cnt = 0
-
     # go through the permutations searching for all possible solutions
     for n in range(possible_permutations):
         rem = n
@@ -56,18 +50,15 @@ def main():
         if result:
             # was this solution encountered previously?
             if result not in solutions:
-                print("Es solucion!")
-                input("Oprima enter para continuar\n")
+                print("¡Es solucion!")
+                input("Oprima Enter para continuar\n")
                 solutions.append(result)
         else:
             print("no es solucion\n")
 
     print('\nInvestigadas', possible_permutations, 'posibilidades')
     sol_cnt = len(solutions)
-    print(sol_cnt, 'soluciones encontradas')
-
-
-
+    print(sol_cnt, 'Soluciones encontradas')
 
 if __name__ == '__main__':
     main()
